@@ -19,15 +19,15 @@ class GenerateData(object):
         self.label_map = collections.defaultdict(set)
 
     def init_lable_fun(self,n,p = 0.5):
-        size = 100
+        size = 4
         while len(self.label_map[1]) < n * p:
-            x = random.randrange(-size,size)
-            y = random.randrange(-size,size)
+            x = random.uniform(-size,size)
+            y = random.uniform(-size,size)
             if x - 0.6 * size >= y:
                 self.label_map[1].add((x,y))
         while len(self.label_map[-1]) < n * (1-p):
-            x = random.randrange(-size,size)
-            y = random.randrange(-size,size)
+            x = random.uniform(-size,size)
+            y = random.uniform(-size,size)
             if x <= y :
                 self.label_map[-1].add((x,y))
 
@@ -50,7 +50,7 @@ class GenerateData(object):
                 data.append([-1,d[1],d[2]])
                 n2 += 1
             else:
-                data.append(d)
+                data.append([1,d[1],d[2]])
                 n1 += 1
         print "1. Noise Free Data Generated!"
         return data,n1,n2

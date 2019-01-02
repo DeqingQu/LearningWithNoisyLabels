@@ -99,6 +99,7 @@ class TrainingModel(object):
         ax1.scatter(x_o, y_o, marker='+', c=color_o,
                     s=20, edgecolor='y')
         ax1.set_title('Noise-free')
+
         # plot2
         x_n = x_o
         y_n = y_o
