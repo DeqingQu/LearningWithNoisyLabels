@@ -1,28 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
-"""
-Project: "A Study of Learning with Noisy Labels"
 
-Copyright (c) 2017 Jianmei Ye
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
 # Tasks
 # 1) Generate Synthetic Data sets
 # 2) Split into train and test
@@ -31,6 +8,7 @@ SOFTWARE.
 # 5) Train model
 # 6) Do prediction on test set
 # 7) Plot comparison
+
 from TrainingModel import TrainingModel
 import pandas as pd
 import os
@@ -46,23 +24,7 @@ and give noise rate for each class label.
     os.chdir(cur_path)
     os.chdir("..")
     while True:
-        run_type = input(
-            "Do you want to run single distribution or group comparison?\nType 1 if single otherwise type 2: ")
-        if run_type == 1:
-            single_run()
-            if raw_input("Try more? Y/N ") == 'Y':
-                print "\n"*50
-                continue
-            else:
-                break
-        else:
-            table_type = input(
-                "Which table do you want? Table 4.2.1 or 4.2.2?\nType 1 for balanced class otherwise type 2: ")
-
-        if table_type == 1:
-            getbalancedTable(True)
-        else:
-            getUnbalancedTable(True)
+        single_run()
         if raw_input("Try more? Y/N ") == 'Y':
             print "\n" * 50
         else:

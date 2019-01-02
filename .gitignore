@@ -1,0 +1,6 @@
+src/bin/
+src/include/
+src/lib/
+
+*.pyc
+.DS_Store
