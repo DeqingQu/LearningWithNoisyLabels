@@ -19,16 +19,15 @@ class GenerateData(object):
         self.label_map = collections.defaultdict(set)
 
     def init_lable_fun(self,n,p = 0.5):
-        size = 4
         while len(self.label_map[1]) < n * p:
-            x = random.uniform(-size,size)
-            y = random.uniform(-size,size)
-            if x - 0.6 * size >= y:
+            x = random.uniform(0, 1)
+            y = random.uniform(0, 1)
+            if x - 0.05 >= y:
                 self.label_map[1].add((x,y))
         while len(self.label_map[-1]) < n * (1-p):
-            x = random.uniform(-size,size)
-            y = random.uniform(-size,size)
-            if x <= y :
+            x = random.uniform(0, 1)
+            y = random.uniform(0, 1)
+            if x + 0.05 <= y :
                 self.label_map[-1].add((x,y))
 
     def original_data(self):
@@ -45,7 +44,9 @@ class GenerateData(object):
                                         n_clusters_per_class=2,flip_y = 0.0001,weights= ws)
         data = []
         n1,n2 = 0,0
-        for d in zip(label, xy[:, 0], xy[:, 1]):
+        x = self.max_min_normalization(xy[:, 0])
+        y = self.max_min_normalization(xy[:, 1])
+        for d in zip(label, x, y):
             if d[0] == 0:
                 data.append([-1,d[1],d[2]])
                 n2 += 1
@@ -54,6 +55,9 @@ class GenerateData(object):
                 n1 += 1
         print "1. Noise Free Data Generated!"
         return data,n1,n2
+
+    def max_min_normalization(self, x):
+        return [(float(i) - min(x)) / float(max(x) - min(x)) for i in x]
 
     def add_noise(self, data,po1,po2):
         noise_data = [list(d) for d in data]
