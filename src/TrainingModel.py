@@ -14,16 +14,24 @@ import os
 
 COLOR = {-1:"r",1:"b"}
 class TrainingModel(object):
-    def __init__(self,data_size,is_random,po1, po2,dim = 3,ws = (0.5,0.5)):
+    def __init__(self,data_size,data_type,po1, po2,dim = 3,ws = (0.5,0.5)):
         self.data_maker = GenerateData(data_size)
         self.true_data_map = {}
-        if is_random:
-            noise_free_data,self.n1,self.n2 = self.data_maker.random_data(dim,ws)
-            self.set_random = True
-        else:
+        if data_type == 1:
             noise_free_data = self.data_maker.original_data()
             self.n1 = self.n2 = self.data_maker.data_size/2
             self.set_random = False
+            self.data_type = 1
+
+        elif data_type == 2:
+            noise_free_data,self.n1,self.n2 = self.data_maker.random_data(dim,ws)
+            self.set_random = True
+            self.data_type = 2
+
+        elif data_type == 3:
+            noise_free_data, self.n1, self.n2 = self.data_maker.banana_data()
+            self.data_type = 3
+
         self.init_true_data_map(noise_free_data)
         noised_data = self.data_maker.add_noise(noise_free_data,po1, po2)
         self.noised_train_set, self.noised_test_set = self.data_maker.split_data(noised_data)
@@ -139,10 +147,12 @@ class TrainingModel(object):
             table.append(tmp)
         df = pd.DataFrame(table, columns=headers)
         df.set_index("Positions")
-        if self.set_random:
+        if self.data_type == 2:
             filename = "random_test_data_" + str(self.data_maker.data_size) +"_" +str(po1) + "_" + str(po2)
-        else:
+        elif self.data_type == 1:
             filename = "linearly_test_data_" + str(self.data_maker.data_size) +"_" +str(po1) + "_" + str(po2)
+        elif self.data_type == 3:
+            filename = "banana_data_" + str(self.data_maker.data_size) + "_" + str(po1) + "_" + str(po2)
 
         df.to_csv("src/PredictOutput/" + filename +".csv",index=False)
         print "Data has been saved as CSV file!"

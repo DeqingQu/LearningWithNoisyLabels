@@ -35,16 +35,12 @@ def single_run(single_call = False):
         cur_path = os.curdir
         os.chdir(cur_path)
         os.chdir("..")
-    data_type = input(
-        "What kind of synthetic data do you want to create?\nLinearly(1) or Random(2)? Please type 1 or 2: ")
-    if data_type == 1:
-        is_random = False
-    else:
-        is_random = True
+    data_type = input("What kind of synthetic data do you want to create?\nLinearly(1) or Random(2) or Banana(3)? Please type 1 or 2 or 3: ")
+
     n = 10000
     po1 = input("Pick a noise rate for class label -1: ")
     po2 = input("Pick a noise rate for class label 1: ")
-    run = TrainingModel(n, is_random,po1, po2)
+    run = TrainingModel(n, data_type, po1, po2)
     clf = run.selectClfByKFold(po1, po2)
     run.comparison_plot(clf, po1, po2)
 

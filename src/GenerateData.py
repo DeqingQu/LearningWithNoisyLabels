@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import os
 
+import csv
+
 # Tasks:
 # Create synthetic dataset similar with paper and random 2 class dataset,
 # split it into training and testing parts,
@@ -55,6 +57,20 @@ class GenerateData(object):
                 n1 += 1
         print "1. Noise Free Data Generated!"
         return data,n1,n2
+
+    def banana_data(self):
+        data = []
+        n1, n2 = 0, 0
+        with open('src/SyntheticDataSet/banana_data.csv') as csvfile:
+            reader = csv.reader(csvfile)
+            for line in reader:
+                data.append([float(line[2]), float(line[0]), float(line[1])])
+                if line[2] == -1:
+                    n2 += 1
+                else:
+                    n1 += 1
+        print "1. Banana Data Read!"
+        return data, n1, n2
 
     def max_min_normalization(self, x):
         return [(float(i) - min(x)) / float(max(x) - min(x)) for i in x]
