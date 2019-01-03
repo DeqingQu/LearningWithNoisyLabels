@@ -92,7 +92,8 @@ class TrainingModel(object):
     def comparison_plot(self,clf,po1,po2,show_plot = False):
         print " =======================================================> \n"
         # Three subplots sharing both x/y axes
-        f, (ax1, ax2, ax3) = plt.subplots(1,3, sharex=True, sharey=True)
+        f, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(15,5), sharex=True, sharey=True)
+
         # plot1
         x_o = [d[1] for d in self.noised_test_set]
         y_o = [d[2] for d in self.noised_test_set]

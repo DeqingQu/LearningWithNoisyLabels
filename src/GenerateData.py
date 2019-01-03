@@ -61,14 +61,21 @@ class GenerateData(object):
     def banana_data(self):
         data = []
         n1, n2 = 0, 0
+        x, y, l = [], [], []
         with open('src/SyntheticDataSet/banana_data.csv') as csvfile:
             reader = csv.reader(csvfile)
             for line in reader:
-                data.append([float(line[2]), float(line[0]), float(line[1])])
+                x.append(float(line[0]))
+                y.append(float(line[1]))
+                l.append(-float(line[2]))
+            x = self.max_min_normalization(x)
+            y = self.max_min_normalization(y)
+            for i in range(len(x)):
+                data.append([l[i], x[i], y[i]])
                 if line[2] == -1:
-                    n2 += 1
-                else:
                     n1 += 1
+                else:
+                    n2 += 1
         print "1. Banana Data Read!"
         return data, n1, n2
 
@@ -104,8 +111,7 @@ class GenerateData(object):
 
     def plot_data(self,all_data,train_data, test_data):
         # Three subplots sharing both x/y axes
-        f, (ax1, ax2,ax3) = plt.subplots(1, 3, sharex=True, sharey=True)
-        # plot1
+        f, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True)
         # plot1
         x_a = [d[1] for d in all_data]
         y_a = [d[2] for d in all_data]
