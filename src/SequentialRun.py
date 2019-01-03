@@ -30,7 +30,6 @@ and give noise rate for each class label.
         else:
             break
 
-
 def single_run(single_call = False):
     if single_call:
         cur_path = os.curdir

@@ -30,7 +30,6 @@ class TrainingModel(object):
         self.nosiy_test_map = {(x, y): label for label, x, y in self.noised_test_set}
         self.unbiased_loss_pred_map = {}
 
-
     def init_true_data_map(self,data):
         for d in data:
             self.true_data_map[(d[1],d[2])] = d[0]
@@ -45,7 +44,6 @@ class TrainingModel(object):
         self.unbiased_loss_pred_map = {(xy[0],xy[1]):int(label) for label,xy in zip(pred_y,test_X)}
         print "5. Classifer has been trained!"
         return clf
-
 
     def selectClfByKFold(self,po1,po2):
         min_Rlf = float('inf')
@@ -66,14 +64,12 @@ class TrainingModel(object):
         print "4. Cross-validation finished!"
         return self.trainByNormalSVM(target_dataset)
 
-
     def lossFunction(self,fx,y):
         return 0 if fx == y else 1
 
     def estLossFunction(self,x,y,py,p_y,po1,po2):
         p1,p2 = po1,po2
         return ((1 - p_y) * self.lossFunction(x, y) - py * self.lossFunction(x, -y)) / (1 - p1 - p2)
-
 
     def accuracy(self,pred,rst):
         match_cnt, all_cnt = 0,0
@@ -84,8 +80,6 @@ class TrainingModel(object):
         rst = round(1.0 * match_cnt/all_cnt,4)
         print "The Accuracy of the prediction is : {}".format(rst)
         return rst
-
-
 
     def comparison_plot(self,clf,po1,po2,show_plot = False):
         print " =======================================================> \n"
@@ -135,7 +129,6 @@ class TrainingModel(object):
         self.save_test_data(f,po1,po2)
         return rst1
 
-
     def save_test_data(self,f,po1,po2):
         table = []
         headers = ["Positions","Noise-free data","Noisy Data","Unbiased_loss_predition"]
@@ -155,8 +148,6 @@ class TrainingModel(object):
         print "Data has been saved as CSV file!"
         f.savefig("src/Figures/" + filename+".png")
         print "Figure has been saved!"
-
-
 
 
 def modular_test():

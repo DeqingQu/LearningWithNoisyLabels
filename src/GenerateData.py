@@ -81,7 +81,6 @@ class GenerateData(object):
         print "2. Noised Data Generated!"
         return noise_data
 
-
     def split_data(self,data):
         train, test = train_test_split(data,shuffle=True)
         print "3. The dataset has been splited into TrainSize and TestSize: {} vs {}".format(len(train), len(test))
@@ -116,8 +115,6 @@ class GenerateData(object):
         f.subplots_adjust(hspace=0)
         plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
         plt.show()
-
-
 
 
 def modular_test():
