@@ -12,7 +12,7 @@ from sklearn.model_selection import  KFold
 import os
 
 
-COLOR = {-1:"r",1:"b"}
+COLOR = {-1:"b",1:"r"}
 class TrainingModel(object):
     def __init__(self,data_size,data_type,po1, po2,dim = 3,ws = (0.5,0.5)):
         self.data_maker = GenerateData(data_size)

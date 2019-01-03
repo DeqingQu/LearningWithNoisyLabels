@@ -67,12 +67,12 @@ class GenerateData(object):
             for line in reader:
                 x.append(float(line[0]))
                 y.append(float(line[1]))
-                l.append(-float(line[2]))
+                l.append(float(line[2]))
             x = self.max_min_normalization(x)
             y = self.max_min_normalization(y)
             for i in range(len(x)):
                 data.append([l[i], x[i], y[i]])
-                if line[2] == -1:
+                if line[2] == 1:
                     n1 += 1
                 else:
                     n2 += 1
