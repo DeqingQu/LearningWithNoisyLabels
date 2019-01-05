@@ -24,12 +24,12 @@ class GenerateData(object):
         while len(self.label_map[1]) < n * p:
             x = random.uniform(0, 1)
             y = random.uniform(0, 1)
-            if x - 0.04 >= y:
+            if x - 0.3 >= y:
                 self.label_map[1].add((x,y))
         while len(self.label_map[-1]) < n * (1-p):
             x = random.uniform(0, 1)
             y = random.uniform(0, 1)
-            if x + 0.04 <= y :
+            if x <= y :
                 self.label_map[-1].add((x,y))
 
     def original_data(self):

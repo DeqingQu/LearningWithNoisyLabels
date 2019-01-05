@@ -17,24 +17,28 @@ class TrainingModel(object):
     def __init__(self,data_size,data_type,po1, po2,dim = 3,ws = (0.5,0.5)):
         self.data_maker = GenerateData(data_size)
         self.true_data_map = {}
+
+        #   linear data
         if data_type == 1:
-            noise_free_data = self.data_maker.original_data()
+            self.noise_free_data = self.data_maker.original_data()
             self.n1 = self.n2 = self.data_maker.data_size/2
             self.set_random = False
             self.data_type = 1
 
+        #   random data
         elif data_type == 2:
-            noise_free_data,self.n1,self.n2 = self.data_maker.random_data(dim,ws)
+            self.noise_free_data,self.n1,self.n2 = self.data_maker.random_data(dim,ws)
             self.set_random = True
             self.data_type = 2
 
+        #   banana data
         elif data_type == 3:
-            noise_free_data, self.n1, self.n2 = self.data_maker.banana_data()
+            self.noise_free_data, self.n1, self.n2 = self.data_maker.banana_data()
             self.data_type = 3
 
-        self.init_true_data_map(noise_free_data)
-        noised_data = self.data_maker.add_noise(noise_free_data,po1, po2)
-        self.noised_train_set, self.noised_test_set = self.data_maker.split_data(noised_data)
+        self.init_true_data_map(self.noise_free_data)
+        self.noised_data = self.data_maker.add_noise(self.noise_free_data,po1, po2)
+        self.noised_train_set, self.noised_test_set = self.data_maker.split_data(self.noised_data)
         self.nosiy_test_map = {(x, y): label for label, x, y in self.noised_test_set}
         self.unbiased_loss_pred_map = {}
 
@@ -44,7 +48,7 @@ class TrainingModel(object):
 
     def trainByNormalSVM(self,train_set):
         train_X = [(d[1],d[2]) for d in train_set]
-        train_y = [ d[0] for d in train_set]
+        train_y = [d[0] for d in train_set]
         clf = svm.SVC()
         clf.fit(train_X,train_y)
         test_X = [(d[1],d[2]) for d in self.noised_test_set]
@@ -68,7 +72,7 @@ class TrainingModel(object):
                 Rlf.append(self.estLossFunction(self.true_data_map[d[1],d[2]],d[0],py,p_y,po1,po2))
             if np.mean(Rlf) < min_Rlf:
                 min_Rlf = np.mean(Rlf)
-                target_dataset= tr_data
+                target_dataset = tr_data
         print "4. Cross-validation finished!"
         return self.trainByNormalSVM(target_dataset)
 
@@ -95,9 +99,12 @@ class TrainingModel(object):
         f, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(15,5), sharex=True, sharey=True)
 
         # plot1
-        x_o = [d[1] for d in self.noised_test_set]
-        y_o = [d[2] for d in self.noised_test_set]
-        label_o = [self.true_data_map[(x,y)] for x,y in zip(x_o,y_o)]
+        # x_o = [d[1] for d in self.noised_test_set]
+        # y_o = [d[2] for d in self.noised_test_set]
+        # label_o = [self.true_data_map[(x,y)] for x,y in zip(x_o,y_o)]
+        x_o = [d[1] for d in self.noise_free_data]
+        y_o = [d[2] for d in self.noise_free_data]
+        label_o = [d[0] for d in self.noise_free_data]
         color_o = [COLOR[d] for d in label_o]
         ax1.scatter(x_o, y_o, marker='+', c=color_o,
                     s=20, edgecolor='y')
@@ -106,7 +113,7 @@ class TrainingModel(object):
         # plot2
         x_n = x_o
         y_n = y_o
-        label_n = [d[0] for d in self.noised_test_set]
+        label_n = [d[0] for d in self.noised_data]
         color_n = [COLOR[d] for d in label_n]
         # rst0 = self.accuracy(label_o,label_n)
         ax2.scatter(x_n, y_n, marker='+', c=color_n,
