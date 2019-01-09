@@ -37,7 +37,7 @@ def single_run(single_call = False):
         os.chdir("..")
     data_type = input("What kind of synthetic data do you want to create?\nLinearly(1) or Random(2) or Banana(3)? Please type 1 or 2 or 3: ")
 
-    n = 2000
+    n = 1000
     po1 = input("Pick a noise rate for class label -1: ")
     po2 = input("Pick a noise rate for class label 1: ")
     run = TrainingModel(n, data_type, po1, po2)

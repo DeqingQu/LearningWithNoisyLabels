@@ -30,9 +30,9 @@ def Cost_Function(X,Y,theta,m, p1, p2):
         xi = X[i]
         hi = Hypothesis(theta,xi)
         if Y[i] == 1:
-            error = Y[i] * math.log(hi) * p1
+            error = math.log(hi) * p1
         else:
-            error = (1-Y[i]) * math.log(1-hi) * p2
+            error = math.log(1-hi) * p2
         sumOfErrors += error
     const = -1/m
     J = const * sumOfErrors
@@ -41,16 +41,17 @@ def Cost_Function(X,Y,theta,m, p1, p2):
 
 def Cost_Function_Derivative(X,Y,theta,j,m,alpha, p1, p2):
     sumErrors = 0
-    error = 0
     for i in range(m):
         xi = X[i]
         xij = xi[j]
         hi = Hypothesis(theta,X[i])
-        error = (hi - Y[i])*xij
+        # error = (hi - Y[i])*xij
         if Y[i] == 1:
-            error *= p1
+            error = p1 * (1-hi) * xij
+            # error *= p1
         else:
-            error *= p2
+            error = -p2 * hi * xij
+            # error *= p2
         sumErrors += error
     m = len(Y)
     constant = float(alpha)/float(m)
@@ -78,11 +79,11 @@ class LR(object):
         p_y = 1.0 * sum(1 for d in y if d == -1) / m
         py = 1.0 * sum(1 for d in y if d == 1) / m
         p1 = (1-p_y) / (1 - po1 - po2)
-        p2 = (-py) / (1 - po1 - po2)
+        p2 = (py) / (1 - po1 - po2)
         print "p1 : " + str(p1)
         print "p2 : " + str(p2)
         for x in range(self.n_iterations):
-            self.w = Gradient_Descent(X, y, self.w, m, self.learning_rate, p1, -p2)
+            self.w = Gradient_Descent(X, y, self.w, m, self.learning_rate, p1, p2)
             if x % 100 == 0:
                 # here the cost function is used to present the final hypothesis of the model in the same form for each gradient-step iteration
                 # Cost_Function(X, y, self.w, m)
@@ -181,7 +182,7 @@ class TrainingModel(object):
             all_cnt += 1
             if a == b:
                 match_cnt += 1
-        rst = round(1.0 * match_cnt/all_cnt,4)
+        rst = round(1.0 * match_cnt/all_cnt, 6)
         print "The Accuracy of the prediction is : {}".format(rst)
         return rst
 
