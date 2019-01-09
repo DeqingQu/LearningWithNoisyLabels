@@ -22,13 +22,13 @@ class GenerateData(object):
 
     def init_lable_fun(self,n,p = 0.5):
         while len(self.label_map[1]) < n * p:
-            x = random.uniform(0, 1)
-            y = random.uniform(0, 1)
+            x = random.uniform(-100, 100) / 100.0
+            y = random.uniform(-100, 100) / 100.0
             if x - 0.3 >= y:
                 self.label_map[1].add((x,y))
         while len(self.label_map[-1]) < n * (1-p):
-            x = random.uniform(0, 1)
-            y = random.uniform(0, 1)
+            x = random.uniform(-100, 100) / 100.0
+            y = random.uniform(-100, 100) / 100.0
             if x <= y :
                 self.label_map[-1].add((x,y))
 

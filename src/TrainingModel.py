@@ -4,15 +4,106 @@
 # Train your classier on the synthetic noisy dataset , and generate prediction results
 
 from sklearn import svm
+from sklearn.linear_model import LogisticRegression
 from GenerateData import GenerateData
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import  KFold
 import os
+import math
+
+def Sigmoid(z):
+    G_of_Z = float(1.0 / float((1.0 + math.exp(-1.0*z))))
+    return G_of_Z
+
+def Hypothesis(theta, x):
+    z = 0
+    for i in range(len(theta)):
+        z += x[i]*theta[i]
+    return Sigmoid(z)
+
+def Cost_Function(X,Y,theta,m, p1, p2):
+    sumOfErrors = 0
+    error = 0
+    for i in range(m):
+        xi = X[i]
+        hi = Hypothesis(theta,xi)
+        if Y[i] == 1:
+            error = Y[i] * math.log(hi) * p1
+        else:
+            error = (1-Y[i]) * math.log(1-hi) * p2
+        sumOfErrors += error
+    const = -1/m
+    J = const * sumOfErrors
+    print 'cost is ' + str(J)
+    return J
+
+def Cost_Function_Derivative(X,Y,theta,j,m,alpha, p1, p2):
+    sumErrors = 0
+    error = 0
+    for i in range(m):
+        xi = X[i]
+        xij = xi[j]
+        hi = Hypothesis(theta,X[i])
+        error = (hi - Y[i])*xij
+        if Y[i] == 1:
+            error *= p1
+        else:
+            error *= p2
+        sumErrors += error
+    m = len(Y)
+    constant = float(alpha)/float(m)
+    J = constant * sumErrors
+    return J
+
+def Gradient_Descent(X,Y,theta,m,alpha, p1, p2):
+    new_theta = []
+    constant = alpha/m
+    for j in range(len(theta)):
+        CFDerivative = Cost_Function_Derivative(X,Y,theta,j,m,alpha, p1, p2)
+        new_theta_value = theta[j] - CFDerivative
+        new_theta.append(new_theta_value)
+    return new_theta
+
+
+class LR(object):
+    def __init__(self, learning_rate=.1, n_iterations=1000):
+        self.learning_rate = learning_rate
+        self.n_iterations = n_iterations
+        self.w = [0, 0]
+
+    def fit(self, X, y, po1, po2):
+        m = len(y)
+        p_y = 1.0 * sum(1 for d in y if d == -1) / m
+        py = 1.0 * sum(1 for d in y if d == 1) / m
+        p1 = (1-p_y) / (1 - po1 - po2)
+        p2 = (-py) / (1 - po1 - po2)
+        print "p1 : " + str(p1)
+        print "p2 : " + str(p2)
+        for x in range(self.n_iterations):
+            self.w = Gradient_Descent(X, y, self.w, m, self.learning_rate, p1, -p2)
+            if x % 100 == 0:
+                # here the cost function is used to present the final hypothesis of the model in the same form for each gradient-step iteration
+                # Cost_Function(X, y, self.w, m)
+                print('theta ', self.w)
+                print('cost is ', Cost_Function(X, y, self.w, m, p1, p2))
+
+    def predict(self, X_test):
+
+        length = len(X_test)
+        pred_y = []
+        for i in range(length):
+            prediction = round(Hypothesis(X_test[i], self.w))
+            if prediction == 1:
+                pred_y.append(1)
+            else:
+                pred_y.append(-1)
+        return pred_y
 
 
 COLOR = {-1:"b",1:"r"}
+
 class TrainingModel(object):
     def __init__(self,data_size,data_type,po1, po2,dim = 3,ws = (0.5,0.5)):
         self.data_maker = GenerateData(data_size)
@@ -46,11 +137,12 @@ class TrainingModel(object):
         for d in data:
             self.true_data_map[(d[1],d[2])] = d[0]
 
-    def trainByNormalSVM(self,train_set):
+    def trainByNormalSVM(self,train_set, po1, po2):
         train_X = [(d[1],d[2]) for d in train_set]
         train_y = [d[0] for d in train_set]
-        clf = svm.SVC()
-        clf.fit(train_X,train_y)
+        # clf = svm.SVC()
+        clf = LR()
+        clf.fit(train_X, train_y, po1, po2)
         test_X = [(d[1],d[2]) for d in self.noised_test_set]
         pred_y = clf.predict(test_X)
         self.unbiased_loss_pred_map = {(xy[0],xy[1]):int(label) for label,xy in zip(pred_y,test_X)}
@@ -74,7 +166,7 @@ class TrainingModel(object):
                 min_Rlf = np.mean(Rlf)
                 target_dataset = tr_data
         print "4. Cross-validation finished!"
-        return self.trainByNormalSVM(target_dataset)
+        return self.trainByNormalSVM(target_dataset, po1, po2)
 
     def lossFunction(self,fx,y):
         return 0 if fx == y else 1
@@ -99,12 +191,12 @@ class TrainingModel(object):
         f, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(15,5), sharex=True, sharey=True)
 
         # plot1
-        # x_o = [d[1] for d in self.noised_test_set]
-        # y_o = [d[2] for d in self.noised_test_set]
-        # label_o = [self.true_data_map[(x,y)] for x,y in zip(x_o,y_o)]
-        x_o = [d[1] for d in self.noise_free_data]
-        y_o = [d[2] for d in self.noise_free_data]
-        label_o = [d[0] for d in self.noise_free_data]
+        x_o = [d[1] for d in self.noised_data]
+        y_o = [d[2] for d in self.noised_data]
+        label_o = [self.true_data_map[(x,y)] for x,y in zip(x_o,y_o)]
+        # x_o = [d[1] for d in self.noise_free_data]
+        # y_o = [d[2] for d in self.noise_free_data]
+        # label_o = [d[0] for d in self.noise_free_data]
         color_o = [COLOR[d] for d in label_o]
         ax1.scatter(x_o, y_o, marker='+', c=color_o,
                     s=20, edgecolor='y')
