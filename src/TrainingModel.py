@@ -47,10 +47,10 @@ def Cost_Function_Derivative(X,Y,theta,j,m,alpha, p1, p2):
         hi = Hypothesis(theta,X[i])
         # error = (hi - Y[i])*xij
         if Y[i] == 1:
-            error = p1 * (1-hi) * xij
+            error = -p1 * (1-hi) * xij
             # error *= p1
         else:
-            error = -p2 * hi * xij
+            error = p2 * hi * xij
             # error *= p2
         sumErrors += error
     m = len(Y)
